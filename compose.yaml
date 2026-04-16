@@ -1,0 +1,36 @@
+services:
+  app:
+    image: node:22-slim
+    working_dir: /app
+    volumes:
+      - .:/app
+    ports:
+      - 8080:8080
+    # live reload - I think
+    command: ["node", "--env-file=.env.dev", "--watch", "index.js"]
+
+# https://hub.docker.com/_/mongo
+  mongo:
+    container_name: csc337-final_mongo-db
+    image: mongo
+    # too many logs
+    attach: false
+    volumes:
+      - ./mongo_data:/data/db
+    environment:
+      MONGO_INITDB_ROOT_USERNAME: root
+      MONGO_INITDB_ROOT_PASSWORD: root
+
+# local web interface for mongo @ localhost:8081
+  mongo-express:
+    image: mongo-express
+    restart: always
+    # too many logs
+    attach: false
+    ports:
+      - 8081:8081
+    environment:
+      ME_CONFIG_MONGODB_URL: mongodb://root:root@mongo:27017/
+      ME_CONFIG_BASICAUTH_ENABLED: true
+      ME_CONFIG_BASICAUTH_USERNAME: admin
+      ME_CONFIG_BASICAUTH_PASSWORD: admin
