@@ -1,13 +1,12 @@
 services:
   app:
-    image: node:22-slim
-    working_dir: /app
+    build:
+      context: .
     volumes:
       - .:/app
+      - /app/node_modules
     ports:
       - 8080:8080
-    # live reload - I think
-    command: ["node", "--env-file=.env.dev", "--watch", "index.js"]
 
 # https://hub.docker.com/_/mongo
   mongo:
