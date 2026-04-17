@@ -65,7 +65,8 @@ app.patch('/posts/:id', async (req,res)=>{
     }, { $set: {
         title: req.body.title,
         content: req.body.content,
-        published: req.body.published
+        published: req.body.published,
+        updated: new Date()
     }})
 
     if(result.matchedCount == 0){ // fail
