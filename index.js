@@ -13,7 +13,9 @@ client.connect().then(() => {
 	app.use(express.urlencoded()); // GET and POST args
 
 	// import modules now that we've set globals and middleware
-	require('./modules/user/user'); // load modules AFTER initialization of globals
+	require('./modules/user/user');
+	require('./modules/post/post');
+	require('./modules/feeds/feeds');
 
 	app.get('/layout.js', (_,res)=>res.sendFile(__dirname + "/modules/static/layout.js"));
 	app.get('/util.js', (_,res)=>res.sendFile(__dirname + "/modules/static/util.js"));
@@ -34,5 +36,3 @@ client.connect().then(() => {
 	console.error('Connection failed', error);
 	process.exit(-1);
 });
-
-

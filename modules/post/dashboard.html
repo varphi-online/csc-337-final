@@ -1,0 +1,99 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+    <title>Dashboard</title>
+    <script defer src="/layout.js"></script>
+    <script src="/util.js"></script>
+    <link rel="stylesheet" href="/app.css">
+</head>
+
+<body>
+    <script defer>
+        fetch('/api/dashboard', {
+            method: "GET",
+            headers: {
+                username: localStorage.getItem('username'),
+                token: localStorage.getItem('token')
+            },
+        }).then(resp => {
+            if (resp.ok) {
+                resp.json().then(json => {
+                    const table = document.getElementById('posts');
+                    json.forEach(p => {
+                        const row = table.insertRow();
+                        row.insertCell(0).innerText = p.title;
+                        row.insertCell(1).innerText = new Date(p.created).toLocaleDateString('en-US', {hour: "2-digit", minute: "2-digit", hour12: true});
+                        row.insertCell(2).innerText = new Date(p.updated).toLocaleDateString('en-US', {hour: "2-digit", minute: "2-digit", hour12: true});
+                        row.insertCell(3).innerHTML =
+                            `<a href="/posts/edit/${p._id}">edit</a>`;
+                        row.insertCell(4).innerHTML =
+                            `<a href="#" onclick="conf(event, '${p._id}')">delete</a>`;
+                        row.insertCell(5).innerHTML =
+                            p.published ? "Yes" : "No";
+                    });
+                })
+            } else {
+                chkError(resp);
+                document.body.innerText = "An error occured."
+                layout(); // add back headers
+            }
+        })
+
+        function conf(e, id){
+            e.target.style['color'] = 'red';
+            e.target.innerText = "confirm";
+            e.target.onclick = (event) => deletePost(event, id);
+        }
+
+        function deletePost(e, id) {
+            e.preventDefault();
+            fetch('/posts/delete/' + id, {
+                method: "DELETE",
+                headers: {
+                    username: localStorage.getItem('username'),
+                    token: localStorage.getItem('token')
+                },
+            }).then(resp => {
+                if (resp.ok) {
+                    e.target.parentElement.parentElement.remove();
+                } else {
+                    chkError(resp);
+                    document.body.innerText = "An error occured."
+                    layout(); // add back headers
+                }
+            })
+        }
+
+        function newPost() {
+            fetch('/posts/new', {
+                method: "POST",
+                headers: {
+                    username: localStorage.getItem('username'),
+                    token: localStorage.getItem('token')
+                },
+            }).then(resp => {
+                if (resp.ok) {
+                    resp.json().then(json => window.location.href = `/posts/edit/${json.id}`);
+                } else {
+                    chkError(resp);
+                    document.body.innerText = "An error occured."
+                    layout(); // add back headers
+                }
+            })
+        }
+    </script>
+    <table id="posts">
+        <tr>
+            <th>Title</th>
+            <th>Created</th>
+            <th>Updated</th>
+            <th>Edit</th>
+            <th>Delete</th>
+            <th>Published</th>
+        </tr>
+    </table>
+    <button onclick="newPost()">New Post</button>
+</body>
+
+</html>

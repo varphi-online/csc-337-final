@@ -8,6 +8,7 @@
 
 // In-memory mapping means if we hot-reload, the tokens get destroyed
 const user_tokens = new Map();
+const users = db.collection('users');
 
 function passHash(pw){
 	return pw; // Realistically we should hash/salt this
@@ -26,22 +27,22 @@ function loggedIn(req, res) {
 	return false;
 }
 
+
 app.get('/login',(_,res)=>res.sendFile(__dirname+"/login.html"));
 app.get('/register',(_,res)=>res.sendFile(__dirname+"/register.html"));
 app.get('/account',(_,res)=>res.sendFile(__dirname+"/account.html"));
 
 // Log them in if possible
 app.post('/api/login', async (req,res)=>{
-	const users = db.collection('users');
 	res.set('Content-Type', 'application/json'); // ct header
 	if(await users.find({
-		username: req.body.username,
+        username: req.body.username,
 		password: passHash(req.body.password)
 	}).hasNext()){
-		const token = makeToken();
+        const token = makeToken();
 		user_tokens.set(req.body.username, token); // loggedin
 		res.status(200).send({
-			token: token,
+            token: token,
 			username: req.body.username
 		});
 		return;
@@ -52,34 +53,33 @@ app.post('/api/login', async (req,res)=>{
 
 // Register the user
 app.post('/api/register', async (req,res)=>{
-	const users = db.collection('users');
 	res.set('Content-Type', 'application/json'); // ct header
     if (await users.find({username: req.body.username}).hasNext()){
-		res.status(400);
+        res.status(400);
         res.send({data: "Username is taken."});
 		return;
     }
-
+    
 	await users.insertOne({ // create user
 		username: req.body.username,
 		password: passHash(req.body.password)
 	});
-
+    
 	// same logic as login
 	const token = makeToken();
 	user_tokens.set(req.body.username, token); // loggedin
 	res.status(200).send({
-		token: token,
+        token: token,
 		username: req.body.username
 	});
 })
 
 app.post('/api/logout', async (req, res)=>{
-	res.set('Content-Type', 'application/json'); // ct header
+    res.set('Content-Type', 'application/json'); // ct header
 	
 	// check if we're actually logged in to logout
 	if(user_tokens.get(req.body.username)==req.body.token){
-		user_tokens.delete(req.body.username);
+        user_tokens.delete(req.body.username);
 		res.status(200).json({url: "/"}); // we expect the user to handle 
 		return;
 	}
@@ -88,8 +88,11 @@ app.post('/api/logout', async (req, res)=>{
 
 // Example endpoint we can use for sanity check, should kick u out if not logged in
 app.get('/api/account', (req,res)=>{
-	if(!loggedIn(req, res)) return;
+    if(!loggedIn(req, res)) return;
 	res.status(200).json({
-		username: req.get('username'), // since its a GET route, must get username from headers
+        username: req.get('username'), // since its a GET route, must get username from headers
 	})
 })
+
+exports.users = users;
+exports.loggedIn = loggedIn;
