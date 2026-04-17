@@ -1,0 +1,40 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+    <title id="pagetitle">Post</title>
+    <script defer src="/layout.js"></script>
+    <script src="/util.js"></script>
+    <link rel="stylesheet" href="/app.css">
+</head>
+
+<body>
+    <script defer>
+        const id = window.location.pathname.split('/').at(-1);
+        fetch('/post/' + id, {
+            method: "GET",
+            headers: {
+                username: localStorage.getItem('username'),
+                token: localStorage.getItem('token')
+            },
+        }).then(resp => {
+            if (resp.ok) {
+                resp.json().then(json => {
+                    document.getElementById('title').innerText =
+                        `${json.title}${json.published ? "" : " (Draft)"}`;
+                    document.getElementById('pagetitle').innerText = json.title;
+                    document.getElementById('content').innerText = json.content;
+                    if(localStorage.getItem('username')==json.user){
+                        document.body.innerHTML += `<a href="/posts/edit/${json._id}">Edit Post</a>`
+                    }
+                })
+            } else {
+                chkError(resp);
+                document.getElementById('content').value = "An error occured.";
+                return;
+            }
+        });
+    </script>
+    <h1 id="title"></h1>
+    <p id="content"></p>
+</body>

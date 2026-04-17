@@ -9,14 +9,13 @@ const user = require('../user/user');
 const posts = db.collection('posts');
 exports.posts = posts;
 
-app.get('/dashboard', (_,res)=>res.sendFile(__dirname+"/dashboard.html"));
-app.get('/posts/edit/:id', (_,res)=>res.sendFile(__dirname+"/edit.html"));
-
-app.get('/api/dashboard', async (req, res)=>{
+// Get all of my posts
+app.get('/posts/mine', async (req, res)=>{
     if (!user.loggedIn(req,res)) return;
-    res.status(200).json(await posts.find({user: req.get('username')}).toArray());
+    res.status(200).json(await posts.find({user: req.get('username')}).sort({updated: -1}).toArray());
 })
 
+// Does what it says on the tin
 app.post('/posts/new',async (req,res)=>{
     if (!user.loggedIn(req,res)) return;
     const post = await posts.insertOne({
@@ -30,6 +29,7 @@ app.post('/posts/new',async (req,res)=>{
     res.status(200).json({id: post.insertedId})
 })
 
+// Does what it says on the tin 2
 app.delete('/posts/delete/:id',async (req,res)=>{
     if (!user.loggedIn(req, res)) return;
     const result = await posts.deleteOne({
@@ -43,26 +43,28 @@ app.delete('/posts/delete/:id',async (req,res)=>{
     res.status(200).end();
 })
 
-app.get('/posts/:id', async (req,res)=>{
+// Get post info, if published, it's public, else, check if the user is logged in 
+app.get('/post/:id', async (req,res)=>{
     const post = await posts.findOne({
         _id: new ObjectId(req.params.id),
-        user: req.get('username')
     });
     if(post.published){
         res.status(200).json(post);
     } else {
         if (!user.loggedIn(req, res)) return;
+        if (!user.authorized(req, res, post.user)) return; // make sure its their post
         res.status(200).json(post);
     }
 })
 
-app.patch('/posts/:id', async (req,res)=>{
+// Update the post with new info. Pretty crude and inefficient but c'est la vie
+app.patch('/post/:id', async (req,res)=>{
     if (!user.loggedIn(req, res)) return;
 
     const result = await posts.updateOne({
         _id: new ObjectId(req.params.id),
         user: req.get('username')
-    }, { $set: {
+    }, { $set: { // $set is unique update operator
         title: req.body.title,
         content: req.body.content,
         published: req.body.published,
@@ -75,3 +77,8 @@ app.patch('/posts/:id', async (req,res)=>{
     }
     res.status(200).end();
 })
+
+// route params need to be defined after routes that would conflict, otherwise they get eaten
+app.get('/dashboard', (_,res)=>res.sendFile(__dirname+"/dashboard.html"));
+app.get('/posts/edit/:id', (_,res)=>res.sendFile(__dirname+"/edit.html"));
+app.get('/posts/:id', (_,res)=>res.sendFile(__dirname+"/post.html"));

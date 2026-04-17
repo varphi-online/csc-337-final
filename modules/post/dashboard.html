@@ -10,7 +10,7 @@
 
 <body>
     <script defer>
-        fetch('/api/dashboard', {
+        fetch('/posts/mine', {
             method: "GET",
             headers: {
                 username: localStorage.getItem('username'),
@@ -22,9 +22,9 @@
                     const table = document.getElementById('posts');
                     json.forEach(p => {
                         const row = table.insertRow();
-                        row.insertCell(0).innerText = p.title;
-                        row.insertCell(1).innerText = new Date(p.created).toLocaleDateString('en-US', {hour: "2-digit", minute: "2-digit", hour12: true});
-                        row.insertCell(2).innerText = new Date(p.updated).toLocaleDateString('en-US', {hour: "2-digit", minute: "2-digit", hour12: true});
+                        row.insertCell(0).innerHTML = `<a href="/posts/${p._id}">${p.title}</a>`;
+                        row.insertCell(1).innerText = new Date(p.created).toLocaleDateString('en-US', { hour: "2-digit", minute: "2-digit", hour12: true });
+                        row.insertCell(2).innerText = new Date(p.updated).toLocaleDateString('en-US', { hour: "2-digit", minute: "2-digit", hour12: true });
                         row.insertCell(3).innerHTML =
                             `<a href="/posts/edit/${p._id}">edit</a>`;
                         row.insertCell(4).innerHTML =
@@ -40,7 +40,7 @@
             }
         })
 
-        function conf(e, id){
+        function conf(e, id) {
             e.target.style['color'] = 'red';
             e.target.innerText = "confirm";
             e.target.onclick = (event) => deletePost(event, id);

@@ -6,12 +6,34 @@
     <script defer src="/layout.js"></script>
     <script src="/util.js"></script>
     <link rel="stylesheet" href="/app.css">
+    <script>
+        function getCurrentPost() {
+            // utility
+            return {
+                title: document.getElementById('title').value,
+                content: document.getElementById('content').value,
+                published: !document.getElementById('draft').checked
+            };
+        }
+
+        function changes(e) {
+            // Warn so they can save if need be
+            const current = getCurrentPost();
+            const truth = JSON.parse(sessionStorage.getItem('truth') || 'null')
+            if (current.title !== truth.title ||
+                current.content !== truth.content ||
+                current.published !== truth.published) {
+                e.preventDefault();
+            }
+            e.returnValue = '';
+        }
+    </script>
 </head>
 
-<body>
+<body onbeforeunload="changes(event)">
     <script defer>
         const id = window.location.pathname.split('/').at(-1);
-        fetch('/posts/' + id, {
+        fetch('/post/' + id, {
             method: "GET",
             headers: {
                 username: localStorage.getItem('username'),
@@ -20,36 +42,36 @@
         }).then(resp => {
             if (resp.ok) {
                 resp.json().then(json => {
+                    sessionStorage.setItem('truth', JSON.stringify(json));
                     document.getElementById('title').value = json.title;
                     document.getElementById('content').value = json.content;
                     document.getElementById('draft').checked = !json.published
+                    document.getElementById('view').href = `/posts/${json._id}`;
                 })
             }
         });
 
         function save() {
-            fetch('/posts/' + id, {
+            const data = JSON.stringify(getCurrentPost());
+            fetch('/post/' + id, {
                 method: "PATCH",
                 headers: {
                     username: localStorage.getItem('username'),
                     token: localStorage.getItem('token'),
                     "Content-Type": "application/json"
                 },
-                body: JSON.stringify({
-                    title: document.getElementById('title').value,
-                    content: document.getElementById('content').value,
-                    published: !document.getElementById('draft').checked
-                })
+                body: data
             }).then(res => {
-                if (!res.ok){
+                if (!res.ok) {
                     document.body.innerHTML += `<p style="color: red;">Something went wrong saving, please try again.</p>`
                 }
                 else { // short message
+                    sessionStorage.setItem('truth', data);
                     const p = document.createElement('p');
                     p.innerText = "saved";
                     p.style['color'] = 'green';
                     document.body.append(p);
-                    setTimeout(()=>p.remove(),1200);
+                    setTimeout(() => p.remove(), 1200);
                 };
             });
         }
@@ -58,5 +80,5 @@
     <label for="title">Title: </label><input id="title" name="title" type="text"><br>
     <label for="content">Content: </label><textarea id="content" name="title" type="content"></textarea><br>
     <label for="draft">Draft</label><input type="checkbox" name="draft" id="draft"><br>
-    <button onclick="save()">Save</button>
+    <div style="display: flex; gap: 1em;"><button onclick="save()">Save</button><a id="view">View Post</a></div>
 </body>

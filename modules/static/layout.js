@@ -27,7 +27,7 @@ function layout(){
     <a href="/account">Account</a>
     <div>
     ${username
-            ? `<p>${username}</p><a href="#" onclick="logout(event)" >Logout</a>`
+            ? `<a href="/user/${username}">${username}</a><a href="#" onclick="logout(event)" >Logout</a>`
             : `<a href="/login?next=${encodeURIComponent(window.location.pathname)}">Login</a>`}
     </div>
     `

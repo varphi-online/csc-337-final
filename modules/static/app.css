@@ -17,3 +17,8 @@
 #header p {
    margin: 0px; 
 }
+
+textarea {
+    field-sizing: content;
+    min-width: 15em;
+}

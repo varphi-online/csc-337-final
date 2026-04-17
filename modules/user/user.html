@@ -1,0 +1,40 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+    <title id="pagetitle">Post</title>
+    <script defer src="/layout.js"></script>
+    <script src="/util.js"></script>
+    <link rel="stylesheet" href="/app.css">
+</head>
+
+<body>
+    <h1 id="username"></h1>
+    <div style="display: flex; flex-direction: column;" id="posts"></div>
+    <script defer>
+        const username = window.location.pathname.split('/').at(-1);
+        document.getElementById('username').innerText = username;
+        fetch('/api/account/' + username, {
+            method: "GET",
+        }).then(resp => {
+            if (resp.ok) {
+                resp.json().then(json => {
+                    const postsDiv = document.getElementById('posts');
+                    json.forEach(post=>{
+                        const e = document.createElement('div');
+                        e.id = post._id;
+                        e.innerHTML = `
+                            <h2><a href="/posts/${post._id}">${post.title || "Untitled"}</a></h2>
+                            <h3>${new Date(post.updated).toLocaleDateString('en-US')}</h3>
+                            <p>${post.content.replaceAll('\n','<br>')}</p>`
+                        postsDiv.appendChild(e);
+                    });
+                    if(json.length == 0) document.getElementById('posts').innerText = "This user has no posts.";
+                })
+            } else {
+                document.getElementById('content').value = "An error occured. This user may not exist.";
+                return;
+            }
+        });
+    </script>
+</body>

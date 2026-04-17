@@ -27,10 +27,21 @@ function loggedIn(req, res) {
 	return false;
 }
 
+// Little helper to return early if user is logged in but not meant to be somewhere
+function authorized(req, res, username) {
+	if(!loggedIn(req,res)) return;
+	if(req.get('username') == username) return true;
+	res.status(401).end(); // UNAUTHORIZED
+	return false;
+}
+
 
 app.get('/login',(_,res)=>res.sendFile(__dirname+"/login.html"));
 app.get('/register',(_,res)=>res.sendFile(__dirname+"/register.html"));
 app.get('/account',(_,res)=>res.sendFile(__dirname+"/account.html"));
+
+// Could/should go into feeds module? 
+app.get('/user/:user',(_,res)=>res.sendFile(__dirname+"/user.html"));
 
 // Log them in if possible
 app.post('/api/login', async (req,res)=>{
@@ -86,13 +97,25 @@ app.post('/api/logout', async (req, res)=>{
 	res.status(401).end(); // UNAUTHORIZED
 })
 
+const post = require('../post/post');
+
 // Example endpoint we can use for sanity check, should kick u out if not logged in
-app.get('/api/account', (req,res)=>{
+app.get('/api/account', async (req,res)=>{
     if(!loggedIn(req, res)) return;
 	res.status(200).json({
         username: req.get('username'), // since its a GET route, must get username from headers
+		posts: await post.posts.countDocuments({user: req.get('username')})
 	})
 })
 
+app.get('/api/account/:user', async (req,res)=>{
+	res.status(200).json(await post.posts.find({
+		user: req.params.user,
+		published: true
+	}).sort({updated: -1}).toArray());
+})
+
+
 exports.users = users;
 exports.loggedIn = loggedIn;
+exports.authorized = authorized;
