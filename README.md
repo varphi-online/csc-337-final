@@ -9,3 +9,10 @@ To get mongo url, use `process.env.MONGO_URL` within node so we can switch it ou
 depending on the context (subject to change with however ahmed wants us to access mongo)
 
 If you are using docker and get "module not found" after adding it to the package.json, run `docker system prune` to clear all docker related cache and then `docker compose up` like normal to rebuild with deps.
+
+### Notes
+Including `/layout.js` in the header with `<script defer src="/layout.js"></script>` will make the page
+have the sitewide header, and if you may need to rerender it for whatever reason, `layout()` will do so.
+Note `defer` here, which runs *after* the window loads the DOM.
+
+Including `/util.js` without defer will give access to helpful functions to reduce tedious-ness.

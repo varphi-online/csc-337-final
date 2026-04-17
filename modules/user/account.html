@@ -1,0 +1,36 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+    <title>Login</title>
+    <script defer src="/layout.js"></script>
+    <script src="/util.js"></script>
+    <link rel="stylesheet" href="app.css">
+</head>
+
+<body>
+    <script defer>
+        fetch('/api/account', {
+            method: "GET",
+            headers: {
+                username: localStorage.getItem('username'),
+                token: localStorage.getItem('token')
+            },
+        }).then(resp => {
+            if (resp.ok) {
+                resp.json().then(json => {
+                    document.getElementById("user").innerText = json.username;
+                    document.getElementById("post").innerText = json.posts;
+                })
+            } else {
+                chkError(resp);
+                document.body.innerText = "An error occured."
+                layout(); // add back headers
+            }
+        })
+    </script>
+    <p>Username: <b id="user"></b></p>
+    <p># of Posts: <b id="post"></b></p>
+</body>
+
+</html>
