@@ -1,0 +1,62 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+    <title>Homein</title>
+    <script defer src="/layout.js"></script>
+    <script src="/util.js"></script>
+    <link rel="stylesheet" href="/app.css">
+</head>
+
+<body>
+    <div style="display: flex; flex-direction: column;" id="posts"></div>
+    <style>
+        .this {
+            border: 2px solid black;
+
+        }
+
+        #pagenums a {
+            padding: 2px;
+        }
+    </style>
+    <div style="display: flex; gap: 1em;" id="pagenums"></div>
+    <script defer>
+        const params = new URLSearchParams(window.location.search);
+        const page = Number(params.get('page'));
+        fetch('/posts?page=' + page ?? 0, {
+            method: "GET",
+        }).then(resp => {
+            if (resp.ok) {
+                resp.json().then(json => {
+                    const postsDiv = document.getElementById('posts');
+                    json.posts.forEach(post => {
+                        const e = document.createElement('div');
+                        e.id = post._id;
+                        e.innerHTML = `
+                            <h2><a href="/posts/${post._id}">${post.title || "Untitled"}</a></h2>
+                            <h3><a href="/user/${post.user}">${post.user}</a> ${new Date(post.updated).toLocaleDateString('en-US')}</h3>
+                            <p>${post.content.replaceAll('\n', '<br>')}</p>`
+                        postsDiv.appendChild(e);
+                    });
+                    if (json.length == 0) document.getElementById('posts').innerText = "No posts here!";
+
+                    // Pagination
+                    const pbox = document.getElementById('pagenums');
+                    const totalPages = Math.ceil(json.pages);
+                    const start = Math.max(0, page - 5);
+                    const end = Math.min(totalPages, start + 10);
+
+                    for (let i = start; i < end; i++) {
+                        pbox.innerHTML += `<a href="/?page=${i}" class="${i == page ? "this" : ""}">${i + 1}</a>`;
+                    }
+                })
+            } else {
+                document.getElementById('content').value = "An error occured. This user may not exist.";
+                return;
+            }
+        });
+    </script>
+</body>
+
+</html>

@@ -11,6 +11,7 @@
 <body>
     <script defer>
         const id = window.location.pathname.split('/').at(-1);
+        // get post contents
         fetch('/post/' + id, {
             method: "GET",
             headers: {
@@ -24,9 +25,14 @@
                         `${json.title}${json.published ? "" : " (Draft)"}`;
                     document.getElementById('pagetitle').innerText = json.title;
                     document.getElementById('content').innerText = json.content;
-                    if(localStorage.getItem('username')==json.user){
-                        document.body.innerHTML += `<a href="/posts/edit/${json._id}">Edit Post</a>`
+                    document.getElementById('user').innerText = json.user;
+                    document.getElementById('user').href = `/user/${json.user}`;
+                    document.getElementById('date').innerText = new Date(json.created).toLocaleDateString('en-US');
+                    if (localStorage.getItem('username') == json.user) {
+                        document.getElementById('content').outerHTML += `<a href="/posts/edit/${json._id}">Edit Post</a>`
                     }
+                    // hide comment if draft
+                    document.getElementById("comment").style['display'] = json.published ? "inherit" : "none";
                 })
             } else {
                 chkError(resp);
@@ -34,7 +40,60 @@
                 return;
             }
         });
+        
+        // get comments
+        fetch('/comments/' + id, {
+            method: "GET",
+        }).then(resp => {
+            if (resp.ok) {
+                resp.json().then(json => {
+                    const commentsDiv = document.getElementById('comments');
+                    json.forEach(comment => {
+                        commentsDiv.innerHTML += `
+                        <div>
+                            <h3 id="${comment._id}"><a href="/user/${comment.user}">${comment.user}</a>
+                                ${new Date(comment.created).toLocaleDateString('en-US')}</h3>
+                            <p>${comment.content}</p>
+                        </div>
+                        `
+                    })
+                })
+            } else {
+                chkError(resp);
+                document.body.innerText = "An error occured.";
+                layout();
+            }
+        })
+
+        function comment(e) {
+            e.preventDefault();
+            fetch('/comments/' + id, {
+                method: "POST",
+                headers: {
+                    username: localStorage.getItem('username'),
+                    token: localStorage.getItem('token'),
+                    "Content-Type": "application/json"
+                },
+                body: JSON.stringify({ content: document.getElementById("comment-content").value })
+            }).then(resp => {
+                if (resp.ok) {
+                    window.location.reload();
+                } else {
+                    chkError(resp);
+                    document.body.innerText = "An error occured.";
+                    layout();
+                }
+            })
+        }
     </script>
     <h1 id="title"></h1>
+    <span id="date"></span>
+    <h3>By: <a id="user"></a></h3>
     <p id="content"></p>
+    <form style="display: none;" id="comment" onsubmit="comment(event)">
+        <textarea id="comment-content" name="comment-content"></textarea><br>
+        <button type="submit">Add Comment</button>
+    </form>
+    <h2>Comments</h2>
+    <div id="comments"></div>
 </body>

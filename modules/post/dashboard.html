@@ -7,7 +7,6 @@
     <script src="/util.js"></script>
     <link rel="stylesheet" href="/app.css">
 </head>
-
 <body>
     <script defer>
         fetch('/posts/mine', {
@@ -31,6 +30,26 @@
                             `<a href="#" onclick="conf(event, '${p._id}')">delete</a>`;
                         row.insertCell(5).innerHTML =
                             p.published ? "Yes" : "No";
+                    });
+                })
+            } else {
+                chkError(resp);
+                document.body.innerText = "An error occured."
+                layout(); // add back headers
+            }
+        })
+
+        fetch('/comments/user/' + localStorage.getItem('username'), {
+            method: "GET",
+        }).then(resp => {
+            if (resp.ok) {
+                resp.json().then(json => {
+                    const table = document.getElementById('comments');
+                    json.forEach(p => {
+                        const row = table.insertRow();
+                        row.insertCell(0).innerHTML = `<a href="/posts/${p.postid}">${p.posttitle}</a>`;
+                        row.insertCell(1).innerText = new Date(p.created).toLocaleDateString('en-US');
+                        row.insertCell(2).innerHTML = `<a href="/posts/${p.postid}#${p._id}">view</a>`
                     });
                 })
             } else {
@@ -83,16 +102,27 @@
             })
         }
     </script>
-    <table id="posts">
-        <tr>
-            <th>Title</th>
-            <th>Created</th>
-            <th>Updated</th>
-            <th>Edit</th>
-            <th>Delete</th>
-            <th>Published</th>
-        </tr>
-    </table>
+    <div style="display: grid;">
+        <h1 style="grid-column: 1; grid-row: 1;">Posts</h1>
+        <table id="posts" style="grid-column: 1; grid-row: 2;">
+            <tr>
+                <th>Title</th>
+                <th>Created</th>
+                <th>Updated</th>
+                <th>Edit</th>
+                <th>Delete</th>
+                <th>Published</th>
+            </tr>
+        </table>
+        <h1 style="grid-column: 2; grid-row: 1;">Comments</h1>
+        <table id="comments" style="grid-column: 2; grid-row: 2;">
+            <tr>
+                <th>Post</th>
+                <th>Created</th>
+                <th>View</th>
+            </tr>
+        </table>
+    </div>
     <button onclick="newPost()">New Post</button>
 </body>
 
