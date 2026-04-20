@@ -5,8 +5,8 @@ const { MongoClient, ObjectId } = require('mongodb');
 // const db = client.db();
 // const app = express()
 
-const post = require('../post/post');
-const user = require('../user/user');
+const post = require('./post');
+const user = require('./user');
 const comments = db.collection('comments');
 
 // Create a comment under post with ID id 

@@ -1,36 +1,38 @@
 <!DOCTYPE html>
 <html>
+
 <head>
     <title>Register</title>
     <script defer src="/layout.js"></script>
     <link rel="stylesheet" href="/app.css">
 </head>
+
 <body>
     <script>
-        function register(e){
+        function register(e) {
             e.preventDefault();
-            if(document.getElementById('password').value
-                != document.getElementById('passwordc').value){
-                    document.getElementById('error').innerText = "Passwords do not match!"
-                    return;
+            if (document.getElementById('password').value
+                != document.getElementById('passwordc').value) {
+                document.getElementById('error').innerText = "Passwords do not match!"
+                return;
             }
-            fetch('/api/register' + window.location.search,{
+            fetch('/api/register' + window.location.search, {
                 method: "POST",
-                headers: {"Content-Type": "application/json"},
+                headers: { "Content-Type": "application/json" },
                 body: JSON.stringify({
                     username: document.getElementById('username').value,
                     password: document.getElementById('password').value
                 })
-            }).then(resp=>{
-                if(resp.ok){ // success
-                    resp.json().then(json=>{
+            }).then(resp => {
+                if (resp.ok) { // success
+                    resp.json().then(json => {
                         localStorage.setItem('username', json.username);
                         localStorage.setItem('token', json.token);
                         const params = new URLSearchParams(window.location.search);
                         window.location.href = decodeURIComponent(params.get('next'))
                     })
                 } else { // bad register
-                    resp.json().then(json=>{
+                    resp.json().then(json => {
                         document.getElementById('error').innerText = json.data;
                     })
                 }
@@ -39,12 +41,14 @@
     </script>
     <h1>Register</h1>
     <form id="form" onsubmit="register(event)">
-        <label for="username">Username: </label><input name="username" id="username" required type="text"/><br>
-        <label for="password">Password: </label><input name="password" id="password" type="password" required/><br>
-        <label for="password">Password Confirm: </label><input name="passwordc" id="passwordc" type="password" required/><br>
+        <label for="username">Username: </label><input name="username" id="username" required type="text" /><br>
+        <label for="password">Password: </label><input name="password" id="password" type="password" required /><br>
+        <label for="password">Password Confirm: </label><input name="passwordc" id="passwordc" type="password"
+            required /><br>
         <button type="submit">Register</button>
     </form>
     <p id="error" style="color: red;"></p>
     <a id="login" href="/login">Login Instead</a>
 </body>
+
 </html>

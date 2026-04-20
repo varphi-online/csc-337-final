@@ -7,17 +7,18 @@ function logout(e) {
             username: localStorage.getItem('username'),
             token: localStorage.getItem('token')
         })
-    }).then(resp=>{ // always logout locally, even on server error
+    }).then(resp => { // always logout locally, even on server error
         localStorage.removeItem('username');
         localStorage.removeItem('token');
-        if(!resp.ok) {
+        if (!resp.ok) {
             window.location.href = "/"
         };
-        resp.json().then(json=>window.location.href = json.url)}
+        resp.json().then(json => window.location.href = json.url)
+    }
     )
 }
 
-function layout(){
+function layout() {
     const username = localStorage.getItem('username');
     const header = document.createElement('div');
     header.id = "header"

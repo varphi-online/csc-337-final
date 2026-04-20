@@ -5,7 +5,7 @@ const { MongoClient, ObjectId } = require('mongodb');
 // const db = client.db();
 // const app = express()
 
-const user = require('../user/user');
+const user = require('./user');
 const posts = db.collection('posts');
 exports.posts = posts;
 
@@ -88,9 +88,9 @@ app.get('/posts', async (req, res) => {
     const count = await posts.countDocuments({ published: true });
     res.status(200).json({
         posts: await all.skip(req.query.page * PAGELIMIT)
-                .limit(PAGELIMIT)
-                .toArray(),
-        pages: count/PAGELIMIT
+            .limit(PAGELIMIT)
+            .toArray(),
+        pages: count / PAGELIMIT
     });
 })
 

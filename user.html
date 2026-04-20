@@ -20,16 +20,16 @@
             if (resp.ok) {
                 resp.json().then(json => {
                     const postsDiv = document.getElementById('posts');
-                    json.forEach(post=>{
+                    json.forEach(post => {
                         const e = document.createElement('div');
                         e.id = post._id;
                         e.innerHTML = `
                             <h2><a href="/posts/${post._id}">${post.title || "Untitled"}</a></h2>
                             <h3>${new Date(post.updated).toLocaleDateString('en-US')}</h3>
-                            <p>${post.content.replaceAll('\n','<br>')}</p>`
+                            <p>${post.content.replaceAll('\n', '<br>')}</p>`
                         postsDiv.appendChild(e);
                     });
-                    if(json.length == 0) document.getElementById('posts').innerText = "This user has no posts.";
+                    if (json.length == 0) document.getElementById('posts').innerText = "This user has no posts.";
                 })
             } else {
                 document.getElementById('content').value = "An error occured. This user may not exist.";

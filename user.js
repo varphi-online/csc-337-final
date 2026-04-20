@@ -10,12 +10,12 @@
 const user_tokens = new Map();
 const users = db.collection('users');
 
-function passHash(pw){
+function passHash(pw) {
 	return pw; // Realistically we should hash/salt this
 }
 
-function makeToken(){
-	return Math.floor(Math.random()*1e10+Math.random()*1e5);
+function makeToken() {
+	return Math.floor(Math.random() * 1e10 + Math.random() * 1e5);
 }
 
 // client needs to send as headers so it doesnt get mixed with any other data
@@ -29,90 +29,90 @@ function loggedIn(req, res) {
 
 // Little helper to return early if user is logged in but not meant to be somewhere
 function authorized(req, res, username) {
-	if(!loggedIn(req,res)) return;
-	if(req.get('username') == username) return true;
+	if (!loggedIn(req, res)) return;
+	if (req.get('username') == username) return true;
 	res.status(401).end(); // UNAUTHORIZED
 	return false;
 }
 
 
-app.get('/login',(_,res)=>res.sendFile(__dirname+"/login.html"));
-app.get('/register',(_,res)=>res.sendFile(__dirname+"/register.html"));
-app.get('/account',(_,res)=>res.sendFile(__dirname+"/account.html"));
+app.get('/login', (_, res) => res.sendFile(__dirname + "/login.html"));
+app.get('/register', (_, res) => res.sendFile(__dirname + "/register.html"));
+app.get('/account', (_, res) => res.sendFile(__dirname + "/account.html"));
 
 // Could/should go into feeds module? 
-app.get('/user/:user',(_,res)=>res.sendFile(__dirname+"/user.html"));
+app.get('/user/:user', (_, res) => res.sendFile(__dirname + "/user.html"));
 
 // Log them in if possible
-app.post('/api/login', async (req,res)=>{
+app.post('/api/login', async (req, res) => {
 	res.set('Content-Type', 'application/json'); // ct header
-	if(await users.find({
-        username: req.body.username,
+	if (await users.find({
+		username: req.body.username,
 		password: passHash(req.body.password)
-	}).hasNext()){
-        const token = makeToken();
+	}).hasNext()) {
+		const token = makeToken();
 		user_tokens.set(req.body.username, token); // loggedin
 		res.status(200).send({
-            token: token,
+			token: token,
 			username: req.body.username
 		});
 		return;
 	}
-	
+
 	res.status(401).end() // UNAUTHORIZED
 })
 
 // Register the user
-app.post('/api/register', async (req,res)=>{
+app.post('/api/register', async (req, res) => {
 	res.set('Content-Type', 'application/json'); // ct header
-    if (await users.find({username: req.body.username}).hasNext()){
-        res.status(400);
-        res.send({data: "Username is taken."});
+	if (await users.find({ username: req.body.username }).hasNext()) {
+		res.status(400);
+		res.send({ data: "Username is taken." });
 		return;
-    }
-    
+	}
+
 	await users.insertOne({ // create user
 		username: req.body.username,
 		password: passHash(req.body.password)
 	});
-    
+
 	// same logic as login
 	const token = makeToken();
 	user_tokens.set(req.body.username, token); // loggedin
 	res.status(200).send({
-        token: token,
+		token: token,
 		username: req.body.username
 	});
 })
 
-app.post('/api/logout', async (req, res)=>{
-    res.set('Content-Type', 'application/json'); // ct header
-	
+app.post('/api/logout', async (req, res) => {
+	res.set('Content-Type', 'application/json'); // ct header
+
 	// check if we're actually logged in to logout
-	if(user_tokens.get(req.body.username)==req.body.token){
-        user_tokens.delete(req.body.username);
-		res.status(200).json({url: "/"}); // we expect the user to handle 
+	if (user_tokens.get(req.body.username) == req.body.token) {
+		user_tokens.delete(req.body.username);
+		res.status(200).json({ url: "/" }); // we expect the user to handle 
 		return;
 	}
 	res.status(401).end(); // UNAUTHORIZED
 })
 
-const post = require('../post/post');
+const post = require('./post');
 
 // Example endpoint we can use for sanity check, should kick u out if not logged in
-app.get('/api/account', async (req,res)=>{
-    if(!loggedIn(req, res)) return;
+app.get('/api/account', async (req, res) => {
+	if (!loggedIn(req, res)) return;
 	res.status(200).json({
-        username: req.get('username'), // since its a GET route, must get username from headers
-		posts: await post.posts.countDocuments({user: req.get('username')})
+		username: req.get('username'), // since its a GET route, must get username from headers
+		posts: await post.posts.countDocuments({ user: req.get('username') })
 	})
 })
 
-app.get('/api/account/:user', async (req,res)=>{
+app.get('/api/account/:user', async (req, res) => {
 	res.status(200).json(await post.posts.find({
 		user: req.params.user,
 		published: true
-	}).sort({updated: -1}).toArray());
+	}).sort({ updated: -1 }).toArray());
 })
 
 
