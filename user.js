@@ -5,13 +5,18 @@
 // const db = client.db();
 // const app = express()
 
+const crypto = require('crypto');
+
 
 // In-memory mapping means if we hot-reload, the tokens get destroyed
 const user_tokens = new Map();
 const users = db.collection('users');
 
-function passHash(pw) {
-	return pw; // Realistically we should hash/salt this
+function passHash(pw){
+	const hash = crypto.createHash('sha256');
+
+	const hashedPassword = hash.update(pw).digest('hex');
+	return hashedPassword;
 }
 
 function makeToken() {
