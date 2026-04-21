@@ -11,13 +11,35 @@
 <body>
     <div style="display: flex; flex-direction: column;" id="posts"></div>
     <style>
+        body{
+            background-color: #f1f1f1;
+        }
+
         .this {
             border: 2px solid black;
-
         }
 
         #pagenums a {
             padding: 2px;
+        }
+
+        .post_title, .post_author{
+            display: inline;
+        }
+
+        .post_content{
+            margin: 10px;
+            margin-left: 15px;
+        }
+
+        .post_body{
+            margin-bottom: 5px;
+            margin-top: 5px;
+            border: 0px solid black;
+            border-radius: 5px;
+            padding: 2px;
+
+            background-color: white;
         }
     </style>
     <div style="display: flex; gap: 1em;" id="pagenums"></div>
@@ -33,10 +55,11 @@
                     json.posts.forEach(post => {
                         const e = document.createElement('div');
                         e.id = post._id;
+                        e.className = "post_body";
                         e.innerHTML = `
-                            <h2><a href="/posts/${post._id}">${post.title || "Untitled"}</a></h2>
-                            <h3><a href="/user/${post.user}">${post.user}</a> ${new Date(post.updated).toLocaleDateString('en-US')}</h3>
-                            <p>${post.content.replaceAll('\n', '<br>')}</p>`
+                            <h2 class="post_title"><a href="/posts/${post._id}">${post.title || "Untitled"}</a></h2>
+                            <h3 class="post_author">- <a href="/user/${post.user}">${post.user}</a> ${new Date(post.updated).toLocaleDateString('en-US')}</h3>
+                            <p class="post_content">${post.content.replaceAll('\n', '<br>')}</p>`
                         postsDiv.appendChild(e);
                     });
                     if (json.length == 0) document.getElementById('posts').innerText = "No posts here!";
