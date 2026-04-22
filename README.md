@@ -16,7 +16,9 @@ The MongoDB interface will run at http://localhost:8081 with username and passwo
 1. `npm install mongodb`
 2. `npm install express`
 3. 
-    - Windows: `set MONGO_URI=mongodb://localhost:27017`
+    - Windows: 
+        - cmd: `set MONGO_URI=mongodb://localhost:27017`
+        - PowerShell `$env:MONGO_URI = mongodb://localhost:27017`
     - Mac/Linux: `export MONGO_URI=mongodb://localhost:27017`
 
     > if you're running on a different port change as needed
