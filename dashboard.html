@@ -8,6 +8,33 @@
     <link rel="stylesheet" href="/app.css">
 </head>
 <body>
+    <style>
+        body{
+            background-color: #f1f1f1;
+        }
+
+        #posts, #comments{
+            background-color: white;
+            border-radius: 5px;
+
+            margin-left: 10px;
+            padding: 2px;
+        }
+
+        #comments{
+            margin-right: 10px;
+        }
+
+        button{
+            margin-top: 10px;
+            margin-left: 3px;
+        }
+
+        h1{
+            margin-left: 3px;
+            margin-bottom: 7px;
+        }
+    </style>
     <script defer>
         fetch('/posts/mine', {
             method: "GET",

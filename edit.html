@@ -31,6 +31,12 @@
 </head>
 
 <body onbeforeunload="changes(event)">
+    <style>
+        #edit_body{
+            margin-left: 3px;
+            margin-top: 5px;
+        }
+    </style>
     <script defer>
         const id = window.location.pathname.split('/').at(-1);
         fetch('/post/' + id, {
@@ -77,8 +83,10 @@
         }
     </script>
     <!-- TODO: Make a form for better ux -->
-    <label for="title">Title: </label><input id="title" name="title" type="text"><br>
-    <label for="content">Content: </label><textarea id="content" name="title" type="content"></textarea><br>
-    <label for="draft">Draft</label><input type="checkbox" name="draft" id="draft"><br>
-    <div style="display: flex; gap: 1em;"><button onclick="save()">Save</button><a id="view">View Post</a></div>
+     <div id="edit_body">
+        <label for="title">Title: </label><input id="title" name="title" type="text"><br>
+        <label for="content">Content: </label><textarea id="content" name="title" type="content"></textarea><br>
+        <label for="draft">Draft</label><input type="checkbox" name="draft" id="draft"><br>
+        <div style="display: flex; gap: 1em;"><button onclick="save()">Save</button><a id="view">View Post</a></div>
+     </div>
 </body>

@@ -9,6 +9,39 @@
 </head>
 
 <body>
+    <style>
+        #username, #posts{
+            margin-left: 3px;
+        }
+
+        #username{
+            margin-bottom: 10px;
+        }
+
+        #post_title, #post_date{
+            margin-top: 10px;
+            margin-bottom: 10px;
+
+            display: inline;
+        }
+
+        #post_body{
+            margin-top: 10px;
+            margin-left: 15px;
+        }
+
+        body{
+            background-color: #f1f1f1;
+        }
+
+        #post{
+            background-color: white;
+            border-radius: 5px;
+
+            padding: 5px;
+            margin: 5px;
+        }
+    </style>
     <h1 id="username"></h1>
     <div style="display: flex; flex-direction: column;" id="posts"></div>
     <script defer>
@@ -24,9 +57,9 @@
                         const e = document.createElement('div');
                         e.id = post._id;
                         e.innerHTML = `
-                            <h2><a href="/posts/${post._id}">${post.title || "Untitled"}</a></h2>
-                            <h3>${new Date(post.updated).toLocaleDateString('en-US')}</h3>
-                            <p>${post.content.replaceAll('\n', '<br>')}</p>`
+                            <div id="post"><h2 id="post_title"><a href="/posts/${post._id}">${post.title || "Untitled"}</a></h2>
+                            <h3 id="post_date">- ${new Date(post.updated).toLocaleDateString('en-US')}</h3>
+                            <p id="post_body">${post.content.replaceAll('\n', '<br>')}</p></div>`
                         postsDiv.appendChild(e);
                     });
                     if (json.length == 0) document.getElementById('posts').innerText = "This user has no posts.";
