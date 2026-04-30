@@ -9,6 +9,11 @@
 </head>
 
 <body>
+    <style>
+        #post_body{
+            margin-left: 3px;
+        }
+    </style>
     <script defer>
         const id = window.location.pathname.split('/').at(-1);
         // get post contents
@@ -86,14 +91,16 @@
             })
         }
     </script>
-    <h1 id="title"></h1>
-    <span id="date"></span>
-    <h3>By: <a id="user"></a></h3>
-    <p id="content"></p>
-    <form style="display: none;" id="comment" onsubmit="comment(event)">
-        <textarea id="comment-content" name="comment-content"></textarea><br>
-        <button type="submit">Add Comment</button>
-    </form>
-    <h2>Comments</h2>
-    <div id="comments"></div>
+    <div id="post_body">
+        <h1 id="title"></h1>
+        <span id="date"></span>
+        <h3>By: <a id="user"></a></h3>
+        <p id="content"></p>
+        <h2>Comments</h2>
+        <form style="display: none;" id="comment" onsubmit="comment(event)">
+            <textarea id="comment-content" name="comment-content"></textarea><br>
+            <button type="submit">New Comment</button>
+        </form>
+        <div id="comments"></div>
+    </div>
 </body>

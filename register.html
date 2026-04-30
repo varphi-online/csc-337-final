@@ -8,6 +8,11 @@
 </head>
 
 <body>
+    <style>
+        #register_body{
+            margin-left: 3px;
+        }
+    </style>
     <script>
         function register(e) {
             e.preventDefault();
@@ -39,16 +44,18 @@
             })
         }
     </script>
-    <h1>Register</h1>
-    <form id="form" onsubmit="register(event)">
-        <label for="username">Username: </label><input name="username" id="username" required type="text" /><br>
-        <label for="password">Password: </label><input name="password" id="password" type="password" required /><br>
-        <label for="password">Password Confirm: </label><input name="passwordc" id="passwordc" type="password"
-            required /><br>
-        <button type="submit">Register</button>
-    </form>
-    <p id="error" style="color: red;"></p>
-    <a id="login" href="/login">Login Instead</a>
+    <div id="register_body">
+        <h1>Register</h1>
+        <form id="form" onsubmit="register(event)">
+            <label for="username">Username: </label><input name="username" id="username" required type="text" /><br>
+            <label for="password">Password: </label><input name="password" id="password" type="password" required /><br>
+            <label for="password">Password Confirm: </label><input name="passwordc" id="passwordc" type="password"
+                required /><br>
+            <button type="submit">Register</button>
+        </form>
+        <p id="error" style="color: red;"></p>
+        <a id="login" href="/login">Login Instead</a>
+    </div>
 </body>
 
 </html>
