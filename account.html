@@ -9,12 +9,65 @@
 </head>
 
 <body>
+    <div id="style-panel" style="border: 1px solid #ddd; padding: 15px;">
+        <h3>Personalize Your Blog</h3>
+        
+        <label>Background Color:</label>
+        <input type="color" value="#fff" id="backgroundColor">
+
+        <label>Font Color: </label>
+        <input type="color" id="fontColor">
+        
+        <label>Font Size: </label>
+        <select id="fontSize">
+            <option value="14px">Small</option>
+            <option value="16px">Standard</option>
+            <option value="20px">Large</option>
+        </select><br>
+        
+        <button onclick="saveStyle()"">Save Settings</button>
+    </div>
     <style>
         p{
             margin-left: 3px;
         }
     </style>
     <script defer>
+        // Load current settings on page load
+        const currentUsername = localStorage.getItem('username');
+        if (currentUsername) {
+            fetch(`/api/style/${currentUsername}`)
+                .then(r => r.json())
+                .then(style => {
+                    document.getElementById('themeColor').value = style.themeColor;
+                    document.getElementById('fontSize').value = style.fontSize;
+                });
+        }
+
+        // Send updated style to the server
+        async function saveStyle() {
+            const backgroundColor = document.getElementById('backgroundColor').value;
+            const fontColor = document.getElementById('fontColor').value;
+            const fontSize = document.getElementById('fontSize').value;
+
+            const resp = await fetch('/api/style', {
+                method: "PATCH",
+                headers: {
+                    'Content-Type': 'application/json',
+                    'username': localStorage.getItem('username'),
+                    'token': localStorage.getItem('token')
+                },
+                body: JSON.stringify({ backgroundColor, themeColor, fontSize })
+            });
+
+            if (resp.ok) {
+                alert("Settings saved! Refreshing...");
+                window.location.reload();
+            } else {
+                alert("Failed to save settings.");
+            }
+        }
+        
         fetch('/api/account', {
             method: "GET",
             headers: {
