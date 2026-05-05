@@ -1,3 +1,9 @@
+:root{
+    --user-font-color: #000000;
+    --user-font-size: 16px;
+    --user-background-color: #FFFFFF;
+}
+
 #header {
     display: flex;
     width: 100%;
