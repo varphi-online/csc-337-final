@@ -35,5 +35,29 @@ function layout() {
     document.body.prepend(header)
 }
 
+async function applyUserStyle(){
+    const path = window.location.pathname;
+    let targetUser = null;
+
+    if (path.startsWith('/user/')){
+        targetUser = path.split('/')[2];
+    }else{
+        targetUser = localStorage.getItem('username');
+    }
+
+    if(targetUser){
+        const resp = await fetch(`/api/style/${targetUser}`);
+        if(resp.ok){
+            const style = await resp.json();
+            const root = document.documentElement;
+            root.style.setProperty('--user-background-color', style.backgroundColor);
+            root.style.setProperty('--user-font-color', style.fontColor);
+            root.style.setProperty('--user-font-size', style.fontSize);
+        }
+    }
+    
+}
+
 
 layout();
+applyUserStyle()

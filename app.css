@@ -1,3 +1,9 @@
+:root{
+    --user-font-color: #000000;
+    --user-font-size: 16px;
+    --user-background-color: #FFFFFF;
+}
+
 #header {
     display: flex;
     width: 100%;
@@ -5,47 +11,32 @@
     padding-top: 0.5em;
     padding-bottom: 0.5em;
     align-items: center;
-    border-bottom: 1px solid black;
-    background-color: white;
+    border-bottom: 1px solid var(--user-font-color);
+}
+#header>form{
+    padding:2px;
 }
 
 #header>div {
     margin-left: auto;
-    margin-right: 5px;
     display: flex;
     gap: 1em;
-}
-
-#header>a{
-    margin-left: 5px;
-    border-radius: 3px;
-
-    background-color: lightgray;
-    padding: 3px;
-
-    text-decoration: none;
-    color: black;
-}
-
-#header>a:hover{
-    background-color: gray;
-    color: white;
 }
 
 #header p {
    margin: 0px; 
 }
 
+body{
+    font-size: var(--user-font-size)
+}
+
+h1, h2 a, #user{
+    color: var(--user-font-color);
+    background-color: var(--user-background-color); 
+}
+
 textarea {
     field-sizing: content;
     min-width: 15em;
-}
-
-input{
-    margin-bottom: 5px;
-}
-
-body, html{
-    margin: 0px;
-    padding: 0px;
 }
