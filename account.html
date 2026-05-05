@@ -36,11 +36,12 @@
         // Load current settings on page load
         const currentUsername = localStorage.getItem('username');
         if (currentUsername) {
-            fetch(`/api/style/${currentUsername}`)
+            fetch(`/api/style/${currentUsername}`, {method: "GET"})
                 .then(r => r.json())
                 .then(style => {
-                    document.getElementById('themeColor').value = style.themeColor;
+                    document.getElementById('backgroundColor').value = style.backgroundColor;
                     document.getElementById('fontSize').value = style.fontSize;
+                    document.getElementById('fontColor').value = style.fontColor;
                 });
         }
 
@@ -57,7 +58,7 @@
                     'username': localStorage.getItem('username'),
                     'token': localStorage.getItem('token')
                 },
-                body: JSON.stringify({ backgroundColor, themeColor, fontSize })
+                body: JSON.stringify({ backgroundColor, fontColor, fontSize })
             });
 
             if (resp.ok) {

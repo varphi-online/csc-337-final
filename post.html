@@ -10,7 +10,7 @@
 
 <body>
     <style>
-        #post_body{
+        #post_body {
             margin-left: 3px;
         }
     </style>
@@ -45,7 +45,7 @@
                 return;
             }
         });
-        
+
         // get comments
         fetch('/comments/' + id, {
             method: "GET",
@@ -55,7 +55,7 @@
                     const commentsDiv = document.getElementById('comments');
                     json.forEach(comment => {
                         commentsDiv.innerHTML += `
-                        <div>
+                        <div class="ccomment">
                             <h3 id="${comment._id}"><a href="/user/${comment.user}">${comment.user}</a>
                                 ${new Date(comment.created).toLocaleDateString('en-US')}</h3>
                             <p>${comment.content}</p>
@@ -91,16 +91,38 @@
             })
         }
     </script>
-    <div id="post_body">
-        <h1 id="title"></h1>
-        <span id="date"></span>
-        <h3>By: <a id="user"></a></h3>
-        <p id="content"></p>
-        <h2>Comments</h2>
-        <form style="display: none;" id="comment" onsubmit="comment(event)">
-            <textarea id="comment-content" name="comment-content"></textarea><br>
-            <button type="submit">New Comment</button>
-        </form>
-        <div id="comments"></div>
+    <style>
+        body,html{
+            background-color: var(--user-background-color, #f1f1f1);
+        }
+        #post_body{
+            margin: 5px;
+            max-width: 40em;
+            min-width: min(100vw, 40em);
+
+            border: 0px solid black;
+            border-radius: 5px;
+            padding: 1em;
+
+            background-color: white;
+        }
+        .ccomment{
+            background-color: white;
+            padding: 1em;
+        }
+    </style>
+    <div style="display: flex; align-items: center; width: 100%; flex-direction: column; gap: 1em;">
+        <div id="post_body">
+            <h1 id="title"></h1>
+            <span id="date"></span>
+            <h3>By: <a id="user"></a></h3>
+            <p id="content"></p>
+            <h2>Comments</h2>
+            <form style="display: none;" id="comment" onsubmit="comment(event)">
+                <textarea id="comment-content" name="comment-content"></textarea><br>
+                <button type="submit">New Comment</button>
+            </form>
+        </div>
+        <div id="comments" style="max-width: 40em; min-width: min(100vw, 40em); gap: 1em; display: flex; flex-direction: column;"></div>
     </div>
 </body>

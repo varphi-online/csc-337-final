@@ -9,8 +9,8 @@
 </head>
 <body>
     <style>
-        body{
-            background-color: #f1f1f1;
+        body,html{
+            background-color: var(--user-background-color, #f1f1f1);
         }
 
         #posts, #comments{
@@ -33,6 +33,11 @@
         h1{
             margin-left: 3px;
             margin-bottom: 7px;
+        }
+        td {
+            text-align: center;
+            padding: 0px;
+            margin: 0px;
         }
     </style>
     <script defer>

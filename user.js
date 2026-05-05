@@ -126,20 +126,20 @@ app.get('/api/style/:username', async(req,res)=>{
 	if(!user){
 		return res.status(404).end();
 	} 
-	res.json(user.blogStyle || {fontColor:'#000000',fontSize:'16px',backgroundColor:'#FFFFFF'});
+	res.json({...user.blogStyle, themeColor: user.fontColor} || {fontColor:'#000000',fontSize:'16px',backgroundColor:'#FFFFFF'});
 })
 
 // PATCH user's blog style (Requires login)
 app.patch('/api/style', async(req,res)=>{
 	if(!loggedIn(req,res)){return;}
 
-	const{themeColor,fontSize} = req.body;
+	const{fontColor,fontSize, backgroundColor} = req.body;
 
 	await users.updateOne(
 		{username: req.get('username')},
 		{
 			$set:{
-				blogStyle:{themeColor, fontSize, backgroundColor}
+				blogStyle:{fontColor, fontSize, backgroundColor}
 			}
 		}
 	);

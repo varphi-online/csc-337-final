@@ -30,20 +30,24 @@
             margin-left: 15px;
         }
 
-        body{
-            background-color: #f1f1f1;
+        body,html{
+            background-color: var(--user-background-color, #f1f1f1);
         }
 
         #post{
-            background-color: white;
-            border-radius: 5px;
-
-            padding: 5px;
             margin: 5px;
+            max-width: 40em;
+            min-width: min(100vw, 40em);
+
+            border: 0px solid black;
+            border-radius: 5px;
+            padding: 1em;
+
+            background-color: white;
         }
     </style>
-    <h1 id="username"></h1>
-    <div style="display: flex; flex-direction: column;" id="posts"></div>
+    
+    <div style="display: flex; flex-direction: column; width: 100%; align-items: center;" id="posts"><h1 id="username"></h1></div>
     <script defer>
         const username = window.location.pathname.split('/').at(-1);
         document.getElementById('username').innerText = username;

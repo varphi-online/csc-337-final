@@ -13,6 +13,7 @@
     align-items: center;
     border-bottom: 1px solid black;
     background-color: white;
+    margin-bottom: 1.5em;
 }
 
 #header>div {
@@ -54,4 +55,7 @@ input{
 body, html{
     margin: 0px;
     padding: 0px;
+    background-color: var(--user-background-color);
+    color: var(--user-font-color);
+    font-size: var(--user-font-size);
 }

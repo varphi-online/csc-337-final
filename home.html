@@ -9,10 +9,10 @@
 </head>
 
 <body>
-    <div style="display: flex; flex-direction: column;" id="posts"></div>
+    <div style="display: flex; flex-direction: column; width: 100%; align-items: center; gap: 1em;" id="posts"></div>
     <style>
-        body{
-            background-color: #f1f1f1;
+        body,html{
+            background-color: var(--user-background-color, #f1f1f1);
         }
 
         .this {
@@ -30,21 +30,23 @@
         }
 
         .post_content{
-            margin: 10px;
-            margin-left: 15px;
+            margin: 0.5em;
+            margin-left: 2em;
         }
 
         .post_body{
             margin: 5px;
+            max-width: 40em;
+            min-width: min(100vw, 40em);
 
             border: 0px solid black;
             border-radius: 5px;
-            padding: 2px;
+            padding: 1em;
 
             background-color: white;
         }
     </style>
-    <div style="display: flex; gap: 1em;" id="pagenums"></div>
+    <div style="display: flex; gap: 1em; justify-content: center; width: 100%; margin-top: 1em;" id="pagenums"></div>
     <script defer>
         const params = new URLSearchParams(window.location.search);
         const page = Number(params.get('page'));

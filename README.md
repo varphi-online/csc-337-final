@@ -2,16 +2,6 @@
 Final project for the CSC337 course through the University of Arizona
 
 ### Running
-#### Docker
-Use `docker compose up` (or `docker-compose up` if on older versions)
-to run Node.js, MongoDB, and a web interface for it.
-
-If you are using docker and get "module not found" after adding it to the package.json, run `docker system prune` to clear all docker related cache and then `docker compose up` like normal to rebuild with deps.
-
-The application will run at http://localhost:8080
-
-The MongoDB interface will run at http://localhost:8081 with username and password `admin`
-
 #### Native
 1. `npm install mongodb`
 2. `npm install express`
@@ -25,6 +15,16 @@ The MongoDB interface will run at http://localhost:8081 with username and passwo
 4. `node index.js`
 
 The application will run at http://localhost:8080
+
+#### Docker
+Use `docker compose up` (or `docker-compose up` if on older versions)
+to run Node.js, MongoDB, and a web interface for it.
+
+If you are using docker and get "module not found" after adding it to the package.json, run `docker system prune` to clear all docker related cache and then `docker compose up` like normal to rebuild with deps.
+
+The application will run at http://localhost:8080
+
+The MongoDB interface will run at http://localhost:8081 with username and password `admin`
 
 ### Notes for Devs
 Including `/layout.js` in the header with `<script defer src="/layout.js"></script>` will make the page
